@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSwarmsStore, Swarm, SwarmTask } from '@/lib/stores/swarms';
 import { Plus, Trash2, Grid3x3 } from '@/lib/icons';
+import { KanbanBoard } from '@/components/kanban/kanban-board';
 
 export function SwarmsView() {
   const { swarms, currentSwarmId, addSwarm, setCurrentSwarm, addTask, updateTask, deleteSwarm } = useSwarmsStore();
@@ -106,68 +107,8 @@ export function SwarmsView() {
               </div>
             </div>
 
-            {/* Kanban Columns */}
-            <div className="flex-1 overflow-x-auto p-6">
-              <div className="flex gap-6 min-w-max">
-                {(['todo', 'in-progress', 'review', 'completed'] as const).map((status) => (
-                  <div key={status} className="flex-1 min-w-80">
-                    {/* Column Header */}
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-foreground capitalize">
-                        {status.replace('-', ' ')}
-                      </h3>
-                      <span className="px-2 py-1 rounded bg-secondary text-secondary-foreground text-xs font-medium">
-                        {currentSwarm.tasks.filter((t) => t.status === status).length}
-                      </span>
-                    </div>
-
-                    {/* Column Container */}
-                    <div className="bg-muted/30 rounded-lg p-4 min-h-96 space-y-3">
-                      {currentSwarm.tasks
-                        .filter((t) => t.status === status)
-                        .map((task) => (
-                          <div key={task.id} className="card-lobe cursor-grab active:cursor-grabbing">
-                            <h4 className="font-medium text-foreground mb-2">
-                              {task.title}
-                            </h4>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              {task.description}
-                            </p>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className={`px-2 py-1 rounded ${
-                                task.priority === 'high'
-                                  ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100'
-                                  : task.priority === 'medium'
-                                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100'
-                                    : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100'
-                              }`}>
-                                {task.priority}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  const newStatus = status === 'completed' ? 'review' : 'completed';
-                                  updateTask(currentSwarm.id, task.id, { status: newStatus });
-                                }}
-                                className="p-1 hover:bg-secondary rounded transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-
-                      {/* Add Task Button */}
-                      <button
-                        onClick={() => handleAddTask(status)}
-                        className="w-full p-4 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-secondary/30 transition-all text-muted-foreground hover:text-primary"
-                      >
-                        <Plus className="w-4 h-4 mx-auto" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Kanban Board Component */}
+            <KanbanBoard swarmId={currentSwarm.id} />
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center">

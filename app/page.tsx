@@ -12,6 +12,7 @@ import {
   Brain,
   Zap,
 } from '@/lib/icons';
+import { ResponsiveNav } from '@/components/responsive-nav';
 import { ChatView } from '@/components/views/chat-view';
 import { SwarmsView } from '@/components/views/swarms-view';
 import { SkillsView } from '@/components/views/skills-view';
@@ -24,12 +25,30 @@ export default function HomePage() {
   const { conversations } = useChatStore();
   const { swarms } = useSwarmsStore();
 
-  if (currentView === 'chat') return <ChatView />;
-  if (currentView === 'swarms') return <SwarmsView />;
-  if (currentView === 'skills') return <SkillsView />;
-  if (currentView === 'artifacts') return <ArtifactsView />;
-  if (currentView === 'memory') return <MemoryView />;
-  if (currentView === 'inspect') return <InspectView />;
+  const renderView = () => {
+    if (currentView === 'chat') return <ChatView />;
+    if (currentView === 'swarms') return <SwarmsView />;
+    if (currentView === 'skills') return <SkillsView />;
+    if (currentView === 'artifacts') return <ArtifactsView />;
+    if (currentView === 'memory') return <MemoryView />;
+    if (currentView === 'inspect') return <InspectView />;
+    
+    // Home dashboard
+    return <HomeContent />;
+  };
+
+  return (
+    <>
+      <ResponsiveNav />
+      {renderView()}
+    </>
+  );
+}
+
+function HomeContent() {
+  const { setCurrentView } = useAppStore();
+  const { conversations } = useChatStore();
+  const { swarms } = useSwarmsStore();
 
   // Home Dashboard
   return (
