@@ -33,112 +33,110 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
       {/* Header */}
-      <div className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
-        <div className="h-full px-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Multi Meta Matrix</h1>
-          <div className="text-sm text-muted-foreground">
-            AI Agent Orchestration Platform
-          </div>
+      <div className="h-14 md:h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between">
+        <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">MMM</h1>
+        <div className="text-xs md:text-sm text-muted-foreground hidden sm:inline-block">
+          AI Agent Orchestration
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-4 md:p-6 max-w-7xl mx-auto">
         {/* Welcome Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-2">
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
             Welcome to MMM
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground">
             Orchestrate powerful AI agents across multiple frameworks
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="card-lobe">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Conversations</p>
-                <p className="text-3xl font-bold text-primary">
+        {/* Quick Stats - Responsive Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12">
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-muted-foreground mb-1 truncate">Conversations</p>
+                <p className="text-2xl md:text-3xl font-bold text-primary">
                   {conversations.length}
                 </p>
               </div>
-              <MessageIcon className="w-10 h-10 text-accent opacity-20" />
+              <MessageIcon className="w-8 md:w-10 h-8 md:h-10 text-accent opacity-20 flex-shrink-0" />
             </div>
           </div>
 
-          <div className="card-lobe">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Swarms</p>
-                <p className="text-3xl font-bold text-primary">
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-muted-foreground mb-1 truncate">Swarms</p>
+                <p className="text-2xl md:text-3xl font-bold text-primary">
                   {swarms.length}
                 </p>
               </div>
-              <Grid3x3 className="w-10 h-10 text-accent opacity-20" />
+              <Grid3x3 className="w-8 md:w-10 h-8 md:h-10 text-accent opacity-20 flex-shrink-0" />
             </div>
           </div>
 
-          <div className="card-lobe">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Skills</p>
-                <p className="text-3xl font-bold text-primary">12</p>
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-muted-foreground mb-1 truncate">Skills</p>
+                <p className="text-2xl md:text-3xl font-bold text-primary">12</p>
               </div>
-              <Puzzle className="w-10 h-10 text-accent opacity-20" />
+              <Puzzle className="w-8 md:w-10 h-8 md:h-10 text-accent opacity-20 flex-shrink-0" />
             </div>
           </div>
 
-          <div className="card-lobe">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Memory</p>
-                <p className="text-3xl font-bold text-primary">24</p>
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-muted-foreground mb-1 truncate">Memory</p>
+                <p className="text-2xl md:text-3xl font-bold text-primary">24</p>
               </div>
-              <Brain className="w-10 h-10 text-accent opacity-20" />
+              <Brain className="w-8 md:w-10 h-8 md:h-10 text-accent opacity-20 flex-shrink-0" />
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
           {/* New Chat */}
-          <div className="card-lobe">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-bold text-foreground mb-1">
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="min-w-0">
+                <h3 className="text-lg md:text-xl font-bold text-foreground mb-1">
                   Start a Conversation
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Chat with AI agents powered by your choice of framework
                 </p>
               </div>
-              <MessageIcon className="w-6 h-6 text-primary flex-shrink-0" />
+              <MessageIcon className="w-5 md:w-6 h-5 md:h-6 text-primary flex-shrink-0" />
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setCurrentView('chat')}
-                className="flex-1 btn-lobe-primary flex items-center justify-center gap-2"
+                className="flex-1 btn-lobe-primary flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <Plus className="w-4 h-4" />
-                New Chat
+                <span>Chat</span>
               </button>
             </div>
           </div>
 
           {/* New Swarm */}
-          <div className="card-lobe">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-bold text-foreground mb-1">
+          <div className="card-lobe p-4 md:p-6">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="min-w-0">
+                <h3 className="text-lg md:text-xl font-bold text-foreground mb-1">
                   Create a Swarm
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Organize multiple agents with a Kanban workflow
                 </p>
               </div>
-              <Grid3x3 className="w-6 h-6 text-primary flex-shrink-0" />
+              <Grid3x3 className="w-5 md:w-6 h-5 md:h-6 text-primary flex-shrink-0" />
             </div>
             <button
               onClick={() => setCurrentView('swarms')}
@@ -151,22 +149,22 @@ export default function HomePage() {
         </div>
 
         {/* Features Section */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-foreground mb-6">
+        <div className="mb-8 md:mb-12">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
             Key Features
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
             {features.map((feature) => (
-              <div key={feature.id} className="card-lobe">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-6 h-6 text-primary" />
+              <div key={feature.id} className="card-lobe p-4 md:p-6">
+                <div className="flex items-start gap-3 md:gap-4">
+                  <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-5 md:w-6 h-5 md:h-6 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-foreground mb-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground mb-1 text-sm md:text-base truncate">
                       {feature.title}
                     </h4>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                       {feature.description}
                     </p>
                   </div>
@@ -178,17 +176,17 @@ export default function HomePage() {
 
         {/* Frameworks Section */}
         <div>
-          <h3 className="text-2xl font-bold text-foreground mb-6">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
             Supported Frameworks
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {frameworks.map((fw) => (
-              <div key={fw.id} className="card-lobe text-center">
-                <div className="w-12 h-12 rounded-lg bg-secondary mx-auto mb-3 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-primary" />
+              <div key={fw.id} className="card-lobe text-center p-4 md:p-6">
+                <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary mx-auto mb-2 md:mb-3 flex items-center justify-center">
+                  <Zap className="w-5 md:w-6 h-5 md:h-6 text-primary" />
                 </div>
-                <h4 className="font-semibold text-foreground mb-2">{fw.name}</h4>
-                <p className="text-xs text-muted-foreground mb-4">
+                <h4 className="font-semibold text-foreground mb-2 text-sm md:text-base">{fw.name}</h4>
+                <p className="text-xs text-muted-foreground">
                   {fw.description}
                 </p>
               </div>

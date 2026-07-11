@@ -42,12 +42,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="light scroll-smooth">
-      <body className="antialiased bg-background text-foreground overflow-hidden">
+      <body className="antialiased bg-background text-foreground">
         <Providers>
-          <Sidebar />
-          <main className="fixed left-64 top-0 right-0 bottom-0 overflow-y-auto transition-all duration-300 lg:left-64 sm:left-20">
-            {children}
-          </main>
+          <div className="flex flex-col h-screen md:flex-row">
+            {/* Mobile: Sidebar at bottom, Desktop: Sidebar on left */}
+            <Sidebar />
+            
+            {/* Main content area - responsive */}
+            <main className="flex-1 overflow-y-auto transition-all duration-300 pb-20 md:pb-0">
+              {children}
+            </main>
+          </div>
         </Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -39,4 +39,6 @@ export {
   Square,
   Moon,
   Sun,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
