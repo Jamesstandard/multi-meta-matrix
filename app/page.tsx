@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '@/lib/stores/app';
 import { useChatStore } from '@/lib/stores/chat';
 import { useSwarmsStore } from '@/lib/stores/swarms';
@@ -20,6 +20,7 @@ import { InspectView } from '@/components/views/inspect-view';
 import { ArtifactsView } from '@/components/views/artifacts-view';
 
 export default function HomePage() {
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const { currentView, setCurrentView } = useAppStore();
   const { conversations } = useChatStore();
   const { swarms } = useSwarmsStore();
@@ -166,11 +167,24 @@ export default function HomePage() {
             Key Features
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-            {features.map((feature) => (
-              <div key={feature.id} className="card-lobe p-4 md:p-6">
+            {getFeatures(setCurrentView).map((feature) => (
+              <button
+                key={feature.id}
+                onClick={() => {
+                  setSelectedCard(feature.id);
+                  feature.action && feature.action();
+                }}
+                className={`card-lobe p-4 md:p-6 text-left transition-all duration-300 cursor-pointer ${
+                  selectedCard === feature.id
+                    ? 'ring-2 ring-primary scale-105 shadow-lg'
+                    : 'hover:shadow-md hover:scale-102 active:scale-95'
+                }`}
+              >
                 <div className="flex items-start gap-3 md:gap-4">
-                  <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-5 md:w-6 h-5 md:h-6 text-primary" />
+                  <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+                    <feature.icon className={`w-5 md:w-6 h-5 md:h-6 ${
+                      selectedCard === feature.id ? 'text-accent' : 'text-primary'
+                    }`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-foreground mb-1 text-sm md:text-base truncate">
@@ -181,7 +195,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -193,15 +207,25 @@ export default function HomePage() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {frameworks.map((fw) => (
-              <div key={fw.id} className="card-lobe text-center p-4 md:p-6">
-                <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary mx-auto mb-2 md:mb-3 flex items-center justify-center">
-                  <Zap className="w-5 md:w-6 h-5 md:h-6 text-primary" />
+              <button
+                key={fw.id}
+                onClick={() => setSelectedCard(fw.id + 100)}
+                className={`card-lobe text-center p-4 md:p-6 transition-all duration-300 cursor-pointer ${
+                  selectedCard === fw.id + 100
+                    ? 'ring-2 ring-primary scale-105 shadow-lg'
+                    : 'hover:shadow-md hover:scale-102 active:scale-95'
+                }`}
+              >
+                <div className="w-10 md:w-12 h-10 md:h-12 rounded-lg bg-secondary mx-auto mb-2 md:mb-3 flex items-center justify-center transition-colors duration-300">
+                  <Zap className={`w-5 md:w-6 h-5 md:h-6 ${
+                    selectedCard === fw.id + 100 ? 'text-accent' : 'text-primary'
+                  }`} />
                 </div>
                 <h4 className="font-semibold text-foreground mb-2 text-sm md:text-base">{fw.name}</h4>
                 <p className="text-xs text-muted-foreground">
                   {fw.description}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -210,42 +234,48 @@ export default function HomePage() {
   );
 }
 
-const features = [
+const getFeatures = (setCurrentView: (view: any) => void) => [
   {
     id: 1,
     title: 'Multi-Framework Support',
     description: 'Choose from CrewAI, AutoGen, OpenClaw, and LangGraph',
     icon: Zap,
+    action: undefined,
   },
   {
     id: 2,
     title: 'Intelligent Chat',
     description: 'Real-time conversations with configurable AI agents',
     icon: MessageIcon,
+    action: () => setCurrentView('chat'),
   },
   {
     id: 3,
     title: 'Kanban Swarms',
     description: 'Organize agent tasks with visual workflow management',
     icon: Grid3x3,
+    action: () => setCurrentView('swarms'),
   },
   {
     id: 4,
     title: 'MCP Marketplace',
     description: 'Browse and integrate tools and skills dynamically',
     icon: Puzzle,
+    action: () => setCurrentView('skills'),
   },
   {
     id: 5,
     title: 'Memory System',
     description: 'Knowledge base and learned memory for agents',
     icon: Brain,
+    action: () => setCurrentView('memory'),
   },
   {
     id: 6,
     title: 'Inspect Panel',
     description: 'DevTools-like debugging and monitoring interface',
     icon: Zap,
+    action: () => setCurrentView('inspect'),
   },
 ];
 

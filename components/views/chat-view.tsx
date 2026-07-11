@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useChatStore, ChatConversation, ChatMessage } from '@/lib/stores/chat';
-import { Plus, Send, Trash2, MessageSquare as MessageIcon, Mic, Square } from '@/lib/icons';
+import { Plus, Send, Trash2, MessageSquare as MessageIcon, Mic, Square, ChevronLeft, ChevronRight } from '@/lib/icons';
 
 export function ChatView() {
   const { conversations, currentConversationId, addConversation, setCurrentConversation, addMessage, deleteConversation } = useChatStore();
@@ -10,6 +10,7 @@ export function ChatView() {
   const [selectedFramework, setSelectedFramework] = useState<'crewai' | 'autogen' | 'openclaw' | 'langgraph'>('crewai');
   const [isRecording, setIsRecording] = useState(false);
   const [transcribedText, setTranscribedText] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const currentConv = conversations.find((c) => c.id === currentConversationId);
@@ -102,12 +103,17 @@ export function ChatView() {
 
       <div className="flex h-[calc(100vh-64px)]">
         {/* Sidebar - Conversations List */}
-        <div className="w-64 border-r border-border bg-card/30 overflow-y-auto">
+        <div className={`border-r border-border bg-card/30 overflow-y-auto transition-all duration-300 ${
+          sidebarCollapsed ? 'w-0' : 'w-64'
+        }`}>
           <div className="p-4 space-y-2">
             {conversations.map((conv) => (
               <button
                 key={conv.id}
-                onClick={() => setCurrentConversation(conv.id)}
+                onClick={() => {
+                  setCurrentConversation(conv.id);
+                  setSidebarCollapsed(true);
+                }}
                 className={`w-full p-3 rounded-lg text-left transition-all duration-200 group flex items-center justify-between ${
                   currentConversationId === conv.id
                     ? 'bg-primary text-primary-foreground'
@@ -142,6 +148,17 @@ export function ChatView() {
           <div className="flex-1 flex flex-col">
             {/* Chat Header */}
             <div className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors mr-4"
+                title={sidebarCollapsed ? 'Show conversations' : 'Hide conversations'}
+              >
+                {sidebarCollapsed ? (
+                  <ChevronRight className="w-5 h-5 text-foreground" />
+                ) : (
+                  <ChevronLeft className="w-5 h-5 text-foreground" />
+                )}
+              </button>
               <div>
                 <h2 className="font-bold text-foreground">{currentConv.title}</h2>
                 <p className="text-xs text-muted-foreground capitalize">

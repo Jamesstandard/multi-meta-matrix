@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useSwarmsStore, Swarm, SwarmTask } from '@/lib/stores/swarms';
-import { Plus, Trash2, Grid3x3 } from '@/lib/icons';
+import { Plus, Trash2, Grid3x3, ChevronLeft, ChevronRight } from '@/lib/icons';
 
 export function SwarmsView() {
   const { swarms, currentSwarmId, addSwarm, setCurrentSwarm, addTask, updateTask, deleteSwarm } = useSwarmsStore();
   const [selectedFramework, setSelectedFramework] = useState<'crewai' | 'autogen' | 'openclaw' | 'langgraph'>('crewai');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const currentSwarm = swarms.find((s) => s.id === currentSwarmId);
 
@@ -58,12 +59,17 @@ export function SwarmsView() {
 
       <div className="flex h-[calc(100vh-64px)]">
         {/* Swarms List */}
-        <div className="w-64 border-r border-border bg-card/30 overflow-y-auto">
+        <div className={`border-r border-border bg-card/30 overflow-y-auto transition-all duration-300 ${
+          sidebarCollapsed ? 'w-0' : 'w-64'
+        }`}>
           <div className="p-4 space-y-2">
             {swarms.map((swarm) => (
               <button
                 key={swarm.id}
-                onClick={() => setCurrentSwarm(swarm.id)}
+                onClick={() => {
+                  setCurrentSwarm(swarm.id);
+                  setSidebarCollapsed(true);
+                }}
                 className={`w-full p-3 rounded-lg text-left transition-all duration-200 group flex items-center justify-between ${
                   currentSwarmId === swarm.id
                     ? 'bg-primary text-primary-foreground'
@@ -98,6 +104,17 @@ export function SwarmsView() {
           <div className="flex-1 flex flex-col">
             {/* Swarm Header */}
             <div className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors mr-4"
+                title={sidebarCollapsed ? 'Show swarms' : 'Hide swarms'}
+              >
+                {sidebarCollapsed ? (
+                  <ChevronRight className="w-5 h-5 text-foreground" />
+                ) : (
+                  <ChevronLeft className="w-5 h-5 text-foreground" />
+                )}
+              </button>
               <div>
                 <h2 className="font-bold text-foreground">{currentSwarm.name}</h2>
                 <p className="text-xs text-muted-foreground capitalize">
