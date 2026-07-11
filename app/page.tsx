@@ -42,14 +42,24 @@ export default function HomePage() {
 
       {/* Main Content */}
       <div className="p-4 md:p-6 max-w-7xl mx-auto">
-        {/* Welcome Section */}
+        {/* Welcome Section with Hero CTA */}
         <div className="mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-2 md:mb-4">
             Welcome to MMM
           </h2>
-          <p className="text-base md:text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground mb-6">
             Orchestrate powerful AI agents across multiple frameworks
           </p>
+          
+          {/* Prominent New Objective Button */}
+          <button
+            onClick={() => setCurrentView('chat')}
+            className="group relative inline-flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+          >
+            <Zap className="w-5 md:w-6 h-5 md:h-6" />
+            <span>Start New Objective</span>
+            <Plus className="w-5 md:w-6 h-5 md:h-6 ml-2 group-hover:rotate-90 transition-transform duration-300" />
+          </button>
         </div>
 
         {/* Quick Stats - Responsive Grid */}

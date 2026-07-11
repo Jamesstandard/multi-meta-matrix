@@ -2,13 +2,13 @@
 
 import React, { ReactNode } from 'react';
 import { Toaster } from 'sonner';
-import { SettingsDrawer } from './modals/settings-drawer';
+import { SettingsDrawerEnhanced } from './modals/settings-drawer-enhanced';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <SettingsDrawer />
+      <SettingsDrawerEnhanced />
       <Toaster position="bottom-right" richColors />
     </>
   );

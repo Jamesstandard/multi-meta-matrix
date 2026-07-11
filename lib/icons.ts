@@ -10,6 +10,7 @@ export {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   Plus,
