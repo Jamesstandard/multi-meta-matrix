@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useChatStore, ChatConversation, ChatMessage } from '@/lib/stores/chat';
-import { Plus, Send, Trash2, MessageSquare as MessageIcon } from '@/lib/icons';
+import { Plus, Send, Trash2, MessageSquare as MessageIcon, Mic, Square } from '@/lib/icons';
 
 export function ChatView() {
   const { conversations, currentConversationId, addConversation, setCurrentConversation, addMessage, deleteConversation } = useChatStore();
   const [messageInput, setMessageInput] = useState('');
   const [selectedFramework, setSelectedFramework] = useState<'crewai' | 'autogen' | 'openclaw' | 'langgraph'>('crewai');
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcribedText, setTranscribedText] = useState('');
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const currentConv = conversations.find((c) => c.id === currentConversationId);
 
@@ -48,6 +51,37 @@ export function ChatView() {
       };
       addMessage(currentConversationId, assistantMessage);
     }, 500);
+  };
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      setIsRecording(true);
+
+      const audioChunks: BlobPart[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        // Simulate voice-to-text transcription
+        setTranscribedText('This is a simulated transcription of your voice message...');
+      };
+
+      mediaRecorder.start();
+    } catch (error) {
+      console.error('[v0] Microphone access denied:', error);
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
   };
 
   return (
@@ -149,24 +183,56 @@ export function ChatView() {
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-border bg-card p-6">
-              <div className="flex gap-3">
+            <div className="border-t border-border bg-card p-4 md:p-6">
+              {/* Transcription Display */}
+              {transcribedText && (
+                <div className="mb-3 p-3 bg-secondary rounded-lg border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">Voice Transcription:</p>
+                  <p className="text-sm text-foreground">{transcribedText}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2 md:gap-3">
                 <input
                   type="text"
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
+                  value={messageInput || transcribedText}
+                  onChange={(e) => {
+                    setMessageInput(e.target.value);
+                    setTranscribedText('');
+                  }}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    if (e.key === 'Enter' && !e.shiftKey && !isRecording) {
                       e.preventDefault();
                       handleSendMessage();
                     }
                   }}
-                  placeholder="Type your message..."
+                  placeholder="Type your message or use voice..."
                   className="input-lobe flex-1"
+                  disabled={isRecording}
                 />
+
+                {/* Voice Input Button */}
+                <button
+                  onClick={isRecording ? handleStopRecording : handleStartRecording}
+                  className={`flex items-center justify-center w-12 h-12 rounded-lg font-medium transition-all duration-300 ${
+                    isRecording
+                      ? 'bg-red-500 text-white hover:bg-red-600 animate-pulse'
+                      : 'btn-lobe-secondary hover:bg-secondary'
+                  }`}
+                  title={isRecording ? 'Stop recording' : 'Start voice input'}
+                >
+                  {isRecording ? (
+                    <Square className="w-4 h-4" />
+                  ) : (
+                    <Mic className="w-4 h-4" />
+                  )}
+                </button>
+
+                {/* Send Button */}
                 <button
                   onClick={handleSendMessage}
-                  className="btn-lobe-primary flex items-center gap-2"
+                  disabled={isRecording}
+                  className="btn-lobe-primary flex items-center gap-2 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                 </button>

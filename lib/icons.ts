@@ -42,4 +42,6 @@ export {
   Sun,
   Volume2,
   VolumeX,
+  Mic,
+  FileText,
 } from 'lucide-react';

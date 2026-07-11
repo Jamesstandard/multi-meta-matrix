@@ -4,7 +4,7 @@ export interface AppState {
   // Navigation
   sidebarOpen: boolean;
   settingsOpen: boolean;
-  currentView: 'home' | 'chat' | 'swarms' | 'skills' | 'memory' | 'inspect';
+  currentView: 'home' | 'chat' | 'swarms' | 'skills' | 'memory' | 'inspect' | 'artifacts';
   
   // Appearance
   theme: 'light' | 'dark' | 'auto';

@@ -17,6 +17,7 @@ import { SwarmsView } from '@/components/views/swarms-view';
 import { SkillsView } from '@/components/views/skills-view';
 import { MemoryView } from '@/components/views/memory-view';
 import { InspectView } from '@/components/views/inspect-view';
+import { ArtifactsView } from '@/components/views/artifacts-view';
 
 export default function HomePage() {
   const { currentView, setCurrentView } = useAppStore();
@@ -26,6 +27,7 @@ export default function HomePage() {
   if (currentView === 'chat') return <ChatView />;
   if (currentView === 'swarms') return <SwarmsView />;
   if (currentView === 'skills') return <SkillsView />;
+  if (currentView === 'artifacts') return <ArtifactsView />;
   if (currentView === 'memory') return <MemoryView />;
   if (currentView === 'inspect') return <InspectView />;
 

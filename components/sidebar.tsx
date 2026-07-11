@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
+  Code,
 } from '@/lib/icons';
 
 export function Sidebar() {
@@ -23,6 +24,7 @@ export function Sidebar() {
     { id: 'chat', label: 'Chat', icon: ChatIcon },
     { id: 'swarms', label: 'Swarms', icon: Grid3x3 },
     { id: 'skills', label: 'Skills', icon: Puzzle },
+    { id: 'artifacts', label: 'Artifacts', icon: Code },
     { id: 'memory', label: 'Memory', icon: Brain },
     { id: 'inspect', label: 'Inspect', icon: Wrench },
   ];
