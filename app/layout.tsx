@@ -1,10 +1,12 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Providers } from '@/components/providers'
+import { Sidebar } from '@/components/sidebar'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Multi Meta Matrix - AI Agent Orchestration',
+  description: 'Powerful multi-framework AI agent orchestration platform',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -28,8 +30,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#f8f9fa' },
+    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
   ],
 }
 
@@ -39,9 +41,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
-        {children}
+    <html lang="en" className="light scroll-smooth">
+      <body className="antialiased bg-background text-foreground overflow-hidden">
+        <Providers>
+          <Sidebar />
+          <main className="fixed left-64 top-0 right-0 bottom-0 overflow-y-auto transition-all duration-300 lg:left-64 sm:left-20">
+            {children}
+          </main>
+        </Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
