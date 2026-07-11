@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Wrench, AlertCircle, CheckCircle, Code, Search, Download, Pause, Play, Clock, Zap, Filter } from '@/lib/icons';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function InspectView() {
   const [activeTab, setActiveTab] = useState<'logs' | 'performance' | 'state' | 'agents'>('logs');
@@ -113,6 +114,52 @@ export function InspectView() {
     { metric: 'Memory Usage', value: '126MB', status: 'good' },
     { metric: 'API Calls/min', value: '12', status: 'good' },
     { metric: 'Error Rate', value: '0.1%', status: 'good' },
+  ];
+
+  // Response Time Timeline (last 10 minutes)
+  const responseTimeData = [
+    { time: '0m', ms: 120 },
+    { time: '1m', ms: 145 },
+    { time: '2m', ms: 180 },
+    { time: '3m', ms: 165 },
+    { time: '4m', ms: 220 },
+    { time: '5m', ms: 245 },
+    { time: '6m', ms: 210 },
+    { time: '7m', ms: 190 },
+    { time: '8m', ms: 235 },
+    { time: '9m', ms: 200 },
+  ];
+
+  // Memory Usage Timeline
+  const memoryData = [
+    { time: '0m', mb: 85 },
+    { time: '1m', mb: 92 },
+    { time: '2m', mb: 101 },
+    { time: '3m', mb: 98 },
+    { time: '4m', mb: 115 },
+    { time: '5m', mb: 126 },
+    { time: '6m', mb: 118 },
+    { time: '7m', mb: 105 },
+    { time: '8m', mb: 120 },
+    { time: '9m', mb: 112 },
+  ];
+
+  // API Calls Distribution
+  const apiCallsData = [
+    { name: 'CrewAI', calls: 8 },
+    { name: 'AutoGen', calls: 3 },
+    { name: 'OpenClaw', calls: 1 },
+    { name: 'LangGraph', calls: 0 },
+  ];
+
+  // Agent Activity Timeline
+  const agentActivityData = [
+    { time: '0:00', researcher: 2, analyst: 1, reporter: 1 },
+    { time: '1:00', researcher: 3, analyst: 0, reporter: 2 },
+    { time: '2:00', researcher: 1, analyst: 2, reporter: 3 },
+    { time: '3:00', researcher: 4, analyst: 1, reporter: 1 },
+    { time: '4:00', researcher: 2, analyst: 3, reporter: 2 },
+    { time: '5:00', researcher: 3, analyst: 2, reporter: 3 },
   ];
 
   const appState = {
@@ -270,36 +317,113 @@ export function InspectView() {
 
         {/* Performance Tab */}
         {activeTab === 'performance' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {performance.map((perf, idx) => (
-              <div key={idx} className="card-lobe">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    {perf.metric === 'Avg Response Time' && <Clock className="w-5 h-5 text-blue-500" />}
-                    {perf.metric === 'Memory Usage' && <Zap className="w-5 h-5 text-purple-500" />}
-                    {perf.metric === 'API Calls/min' && <Filter className="w-5 h-5 text-green-500" />}
-                    {perf.metric === 'Error Rate' && <AlertCircle className="w-5 h-5 text-red-500" />}
-                    <h3 className="font-semibold text-foreground">
-                      {perf.metric}
-                    </h3>
+          <div className="space-y-6">
+            {/* Key Metrics Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {performance.map((perf, idx) => (
+                <div key={idx} className="card-lobe">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      {perf.metric === 'Avg Response Time' && <Clock className="w-5 h-5 text-blue-500" />}
+                      {perf.metric === 'Memory Usage' && <Zap className="w-5 h-5 text-purple-500" />}
+                      {perf.metric === 'API Calls/min' && <Filter className="w-5 h-5 text-green-500" />}
+                      {perf.metric === 'Error Rate' && <AlertCircle className="w-5 h-5 text-red-500" />}
+                      <h3 className="font-semibold text-foreground text-sm">
+                        {perf.metric}
+                      </h3>
+                    </div>
                   </div>
-                  {perf.status === 'good' ? (
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                  )}
+                  <p className="text-2xl font-bold text-primary">
+                    {perf.value}
+                  </p>
                 </div>
-                <p className="text-3xl font-bold text-primary mb-2">
-                  {perf.value}
-                </p>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-green-500 to-accent"
-                    style={{ width: '75%' }}
+              ))}
+            </div>
+
+            {/* Response Time Chart */}
+            <div className="card-lobe">
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-blue-500" />
+                Response Time (Last 10 minutes)
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={responseTimeData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="time" stroke="currentColor" className="text-muted-foreground" />
+                  <YAxis stroke="currentColor" className="text-muted-foreground" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
                   />
-                </div>
+                  <Line
+                    type="monotone"
+                    dataKey="ms"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Memory & API Calls Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Memory Usage Chart */}
+              <div className="card-lobe">
+                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  Memory Usage (Last 10 minutes)
+                </h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={memoryData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="time" stroke="currentColor" className="text-muted-foreground" />
+                    <YAxis stroke="currentColor" className="text-muted-foreground" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="mb"
+                      fill="hsl(var(--primary) / 0.1)"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
-            ))}
+
+              {/* API Calls Distribution */}
+              <div className="card-lobe">
+                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-green-500" />
+                  API Calls by Framework
+                </h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={apiCallsData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="name" stroke="currentColor" className="text-muted-foreground" />
+                    <YAxis stroke="currentColor" className="text-muted-foreground" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                      }}
+                    />
+                    <Bar dataKey="calls" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         )}
 
@@ -316,49 +440,99 @@ export function InspectView() {
 
         {/* Agents Tab */}
         {activeTab === 'agents' && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {agents.map((agent) => (
-                <div key={agent.id} className="card-lobe">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{agent.name}</h3>
-                      <p className="text-xs text-muted-foreground capitalize">{agent.framework}</p>
-                    </div>
-                    <div className={`w-3 h-3 rounded-full ${
-                      agent.status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-                    }`} />
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Tasks Completed:</span>
-                      <span className="font-semibold text-foreground">{agent.tasksCompleted}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Status:</span>
-                      <span className={`font-semibold capitalize ${
-                        agent.status === 'active' ? 'text-green-600' : 'text-gray-500'
-                      }`}>
-                        {agent.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Last Active:</span>
-                      <span className="font-semibold text-foreground text-xs">
-                        {Math.round((Date.now() - agent.lastActivity) / 1000)}s ago
-                      </span>
-                    </div>
-                  </div>
+          <div className="space-y-6">
+            {/* Agent Activity Timeline */}
+            <div className="card-lobe">
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-blue-500" />
+                Agent Activity Timeline (Last 6 hours)
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={agentActivityData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="time" stroke="currentColor" className="text-muted-foreground" />
+                  <YAxis stroke="currentColor" className="text-muted-foreground" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="researcher"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    name="Researcher"
+                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="analyst"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth={2}
+                    name="Analyst"
+                    dot={{ fill: 'hsl(var(--accent))', r: 4 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="reporter"
+                    stroke="hsl(100, 84%, 60%)"
+                    strokeWidth={2}
+                    name="Reporter"
+                    dot={{ fill: 'hsl(100, 84%, 60%)', r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
 
-                  <button
-                    className="w-full px-3 py-2 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-sm font-medium transition-colors"
-                    title="Open agent builder"
-                  >
-                    Edit Agent
-                  </button>
-                </div>
-              ))}
+            {/* Agent Details Grid */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Active Agents</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {agents.map((agent) => (
+                  <div key={agent.id} className="card-lobe">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h4 className="font-semibold text-foreground">{agent.name}</h4>
+                        <p className="text-xs text-muted-foreground capitalize">{agent.framework}</p>
+                      </div>
+                      <div className={`w-3 h-3 rounded-full ${
+                        agent.status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
+                      }`} />
+                    </div>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Tasks:</span>
+                        <span className="font-semibold text-foreground">{agent.tasksCompleted}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Status:</span>
+                        <span className={`font-semibold capitalize ${
+                          agent.status === 'active' ? 'text-green-600' : 'text-gray-500'
+                        }`}>
+                          {agent.status}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Last Active:</span>
+                        <span className="font-semibold text-foreground text-xs">
+                          {Math.round((Date.now() - agent.lastActivity) / 1000)}s ago
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="w-full px-3 py-2 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-sm font-medium transition-colors"
+                      title="Open agent builder"
+                    >
+                      Edit Agent
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {agents.length === 0 && (
