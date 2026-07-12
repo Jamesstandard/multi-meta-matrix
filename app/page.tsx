@@ -19,6 +19,7 @@ import { MemoryView } from '@/components/views/memory-view';
 import { InspectView } from '@/components/views/inspect-view';
 import { ArtifactsView } from '@/components/views/artifacts-view';
 import { IntegrationsView } from '@/components/views/integrations-view';
+import { LLMConfigView } from '@/components/views/llm-config-view';
 import { useAgentStore } from '@/lib/stores/agents';
 
 export default function HomePage() {
@@ -33,6 +34,7 @@ export default function HomePage() {
   if (currentView === 'swarms') return <SwarmsView />;
   if (currentView === 'skills') return <SkillsView />;
   if (currentView === 'integrations') return <IntegrationsView />;
+  if (currentView === 'llm') return <LLMConfigView />;
   if (currentView === 'artifacts') return <ArtifactsView />;
   if (currentView === 'memory') return <MemoryView />;
   if (currentView === 'inspect') return <InspectView />;

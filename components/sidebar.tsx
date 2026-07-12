@@ -27,6 +27,7 @@ export function Sidebar() {
     { id: 'agents', label: 'Agents', icon: Plus },
     { id: 'swarms', label: 'Swarms', icon: Grid3x3 },
     { id: 'skills', label: 'Skills', icon: Puzzle },
+    { id: 'llm', label: 'LLM Config', icon: Settings },
     { id: 'integrations', label: 'Integrations', icon: Zap },
     { id: 'memory', label: 'Memory', icon: Brain },
     { id: 'artifacts', label: 'Artifacts', icon: Code },

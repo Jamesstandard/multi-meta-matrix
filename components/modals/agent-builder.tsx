@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { X, Plus, Trash2, Settings } from '@/lib/icons';
 import { BookOpen } from 'lucide-react';
+import { useLLMConfigStore } from '@/lib/stores/llm-config';
+import { LLMSettings } from '@/components/modals/llm-settings';
 
 interface AgentBuilderProps {
   isOpen: boolean;
@@ -11,15 +13,19 @@ interface AgentBuilderProps {
 }
 
 export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
-  const [activeTab, setActiveTab] = useState<'basic' | 'config' | 'tools' | 'integrations'>('basic');
+  const { configs } = useLLMConfigStore();
+  const [activeTab, setActiveTab] = useState<'basic' | 'config' | 'tools' | 'integrations' | 'llm'>('basic');
+  const [showLLMSettings, setShowLLMSettings] = useState(false);
   const [framework, setFramework] = useState<'crewai' | 'autogen' | 'openclaw' | 'langgraph'>('crewai');
   const [agentName, setAgentName] = useState('');
   const [description, setDescription] = useState('');
   const [avatar, setAvatar] = useState<string | null>(null);
   const [role, setRole] = useState('');
-  const [model, setModel] = useState<'gpt-4' | 'gpt-3.5-turbo' | 'claude-3-opus' | 'claude-3-sonnet' | 'llama-2' | 'mixtral'>('gpt-4');
+  const [selectedLLMConfig, setSelectedLLMConfig] = useState<string>(configs.length > 0 ? configs[0].id : '');
+  const [customModel, setCustomModel] = useState('');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2048);
+  const [systemPrompt, setSystemPrompt] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [newTool, setNewTool] = useState('');
   const [mcpTools, setMcpTools] = useState<string[]>([]);
@@ -58,6 +64,9 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
     }
   };
 
+  const selectedConfig = configs.find((c) => c.id === selectedLLMConfig);
+  const actualModel = customModel || selectedConfig?.defaultModel || 'gpt-4';
+
   const handleSave = () => {
     onSave({
       id: `agent-${Date.now()}`,
@@ -66,11 +75,13 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
       avatar,
       role,
       framework,
-      model,
+      model: actualModel,
+      llmConfigId: selectedLLMConfig,
       tools,
       mcpTools,
       temperature,
       maxTokens,
+      systemPrompt,
       isActive: true,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -81,6 +92,7 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
     setRole('');
     setTools([]);
     setMcpTools([]);
+    setSystemPrompt('');
     setActiveTab('basic');
     onClose();
   };
@@ -110,18 +122,18 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mb-6 border-b border-border pb-4">
-            {(['basic', 'config', 'tools', 'integrations'] as const).map((tab) => (
+          <div className="flex gap-4 mb-6 border-b border-border pb-4 overflow-x-auto">
+            {(['basic', 'config', 'llm', 'tools', 'integrations'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 font-medium transition-colors capitalize ${
+                className={`px-4 py-2 font-medium transition-colors capitalize whitespace-nowrap ${
                   activeTab === tab
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {tab === 'config' ? 'Configuration' : tab}
+                {tab === 'config' ? 'Configuration' : tab === 'llm' ? 'LLM Settings' : tab}
               </button>
             ))}
           </div>
@@ -280,6 +292,131 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
               </div>
             )}
 
+            {/* LLM Settings Tab */}
+            {activeTab === 'llm' && (
+              <div className="space-y-4">
+                {/* LLM Configuration Selection */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-foreground">
+                      LLM Configuration
+                    </label>
+                    <button
+                      onClick={() => setShowLLMSettings(true)}
+                      className="text-xs text-primary hover:underline flex items-center gap-1"
+                    >
+                      <Settings className="w-3 h-3" />
+                      Manage Configurations
+                    </button>
+                  </div>
+                  <select
+                    value={selectedLLMConfig}
+                    onChange={(e) => setSelectedLLMConfig(e.target.value)}
+                    className="input-lobe w-full"
+                  >
+                    <option value="">Select a configuration</option>
+                    {configs.map((config) => (
+                      <option key={config.id} value={config.id}>
+                        {config.name} ({config.provider})
+                      </option>
+                    ))}
+                  </select>
+                  {!selectedLLMConfig && (
+                    <p className="text-xs text-amber-600 mt-2">
+                      ⚠️ Create an LLM configuration to proceed
+                    </p>
+                  )}
+                </div>
+
+                {/* Custom Model Override */}
+                {selectedConfig && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Select Model (or override)
+                    </label>
+                    <select
+                      value={customModel}
+                      onChange={(e) => setCustomModel(e.target.value)}
+                      className="input-lobe w-full"
+                    >
+                      <option value="">Use default: {selectedConfig.defaultModel}</option>
+                      {selectedConfig.models?.map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* System Prompt */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    System Prompt
+                  </label>
+                  <textarea
+                    value={systemPrompt}
+                    onChange={(e) => setSystemPrompt(e.target.value)}
+                    placeholder="Define the behavior and instructions for this agent..."
+                    className="input-lobe w-full min-h-32 resize-none"
+                  />
+                </div>
+
+                {/* Advanced Parameters from Config */}
+                {selectedConfig && (
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-medium text-foreground mb-3">Advanced Parameters</h4>
+                    <div className="space-y-3">
+                      {selectedConfig.temperature !== undefined && (
+                        <div>
+                          <label className="text-sm font-medium text-foreground">
+                            Temperature: {temperature.toFixed(2)}
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="2"
+                            step="0.1"
+                            value={temperature}
+                            onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                            className="input-lobe w-full"
+                          />
+                        </div>
+                      )}
+
+                      {selectedConfig.maxTokens !== undefined && (
+                        <div>
+                          <label className="text-sm font-medium text-foreground">
+                            Max Tokens
+                          </label>
+                          <input
+                            type="number"
+                            min="256"
+                            max={selectedConfig.maxTokens}
+                            step="256"
+                            value={maxTokens}
+                            onChange={(e) => setMaxTokens(parseInt(e.target.value))}
+                            className="input-lobe w-full"
+                          />
+                        </div>
+                      )}
+
+                      {selectedConfig.topP !== undefined && (
+                        <div>
+                          <label className="text-sm font-medium text-foreground">
+                            Top P: {selectedConfig.topP.toFixed(2)}
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            {selectedConfig.topP}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Tools Tab */}
             {activeTab === 'tools' && (
               <div className="space-y-4">
@@ -324,29 +461,18 @@ export function AgentBuilder({ isOpen, onClose, onSave }: AgentBuilderProps) {
                         </button>
                       </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-            )}
+        </div>
+      </div>
 
-            {/* Integrations Tab */}
-            {activeTab === 'integrations' && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    MCP Tools
-                  </label>
-                  <div className="flex gap-2 mb-3">
-                    <input
-                      type="text"
-                      value={newMcpTool}
-                      onChange={(e) => setNewMcpTool(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleAddMcpTool();
-                        }
+      {/* LLM Settings Modal */}
+      <LLMSettings
+        isOpen={showLLMSettings}
+        onClose={() => setShowLLMSettings(false)}
+        onSelectConfig={setSelectedLLMConfig}
+      />
+    </div>
+  );
+}
                       }}
                       placeholder="Add MCP tool..."
                       className="input-lobe flex-1"

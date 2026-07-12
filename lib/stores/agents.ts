@@ -6,7 +6,8 @@ export interface Agent {
   description: string;
   avatar?: string;
   framework: 'crewai' | 'autogen' | 'openclaw' | 'langgraph';
-  model: 'gpt-4' | 'gpt-3.5-turbo' | 'claude-3-opus' | 'claude-3-sonnet' | 'llama-2' | 'mixtral';
+  model: string;
+  llmConfigId?: string;
   role?: string;
   tools: string[];
   skills: string[];
