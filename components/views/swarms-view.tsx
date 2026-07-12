@@ -3,13 +3,18 @@
 import React, { useState } from 'react';
 import { useSwarmsStore, Swarm, SwarmTask } from '@/lib/stores/swarms';
 import { Plus, Trash2, Grid3x3, ChevronLeft, ChevronRight } from '@/lib/icons';
+import { TaskEditor } from '@/components/modals/task-editor';
+import { TaskCard } from '@/components/task-card';
 
 export function SwarmsView() {
-  const { swarms, currentSwarmId, addSwarm, setCurrentSwarm, addTask, updateTask, deleteSwarm } = useSwarmsStore();
+  const { swarms, currentSwarmId, addSwarm, setCurrentSwarm, addTask, updateTask, deleteSwarm, deleteTask } = useSwarmsStore();
   const [selectedFramework, setSelectedFramework] = useState<'crewai' | 'autogen' | 'openclaw' | 'langgraph'>('crewai');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const currentSwarm = swarms.find((s) => s.id === currentSwarmId);
+  const editingTask = currentSwarm?.tasks.find((t) => t.id === editingTaskId);
 
   const handleNewSwarm = () => {
     const newSwarm: Swarm = {
@@ -37,8 +42,37 @@ export function SwarmsView() {
       priority: 'medium',
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      isActive: false,
     };
     addTask(currentSwarmId, newTask);
+    setEditingTaskId(newTask.id);
+    setIsEditorOpen(true);
+  };
+
+  const handleEditTask = (taskId: string) => {
+    setEditingTaskId(taskId);
+    setIsEditorOpen(true);
+  };
+
+  const handleSaveTask = (updatedTask: SwarmTask) => {
+    if (!currentSwarmId) return;
+    updateTask(currentSwarmId, updatedTask.id, updatedTask);
+  };
+
+  const handlePlayTask = (taskId: string) => {
+    if (!currentSwarmId) return;
+    const task = currentSwarm?.tasks.find((t) => t.id === taskId);
+    if (task) {
+      updateTask(currentSwarmId, taskId, {
+        isActive: !task.isActive,
+        status: task.isActive ? task.status : 'in-progress',
+      });
+    }
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    if (!currentSwarmId) return;
+    deleteTask(currentSwarmId, taskId);
   };
 
   return (
@@ -143,34 +177,13 @@ export function SwarmsView() {
                       {currentSwarm.tasks
                         .filter((t) => t.status === status)
                         .map((task) => (
-                          <div key={task.id} className="card-lobe cursor-grab active:cursor-grabbing">
-                            <h4 className="font-medium text-foreground mb-2">
-                              {task.title}
-                            </h4>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              {task.description}
-                            </p>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className={`px-2 py-1 rounded ${
-                                task.priority === 'high'
-                                  ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100'
-                                  : task.priority === 'medium'
-                                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100'
-                                    : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100'
-                              }`}>
-                                {task.priority}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  const newStatus = status === 'completed' ? 'review' : 'completed';
-                                  updateTask(currentSwarm.id, task.id, { status: newStatus });
-                                }}
-                                className="p-1 hover:bg-secondary rounded transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
+                          <TaskCard
+                            key={task.id}
+                            task={task}
+                            onEdit={() => handleEditTask(task.id)}
+                            onPlay={() => handlePlayTask(task.id)}
+                            onDelete={() => handleDeleteTask(task.id)}
+                          />
                         ))}
 
                       {/* Add Task Button */}
@@ -205,6 +218,16 @@ export function SwarmsView() {
           </div>
         )}
       </div>
+
+      {/* Task Editor Modal */}
+      {editingTask && (
+        <TaskEditor
+          task={editingTask}
+          isOpen={isEditorOpen}
+          onClose={() => setIsEditorOpen(false)}
+          onSave={handleSaveTask}
+        />
+      )}
     </div>
   );
 }
