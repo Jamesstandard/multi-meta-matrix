@@ -18,16 +18,21 @@ import { SkillsView } from '@/components/views/skills-view';
 import { MemoryView } from '@/components/views/memory-view';
 import { InspectView } from '@/components/views/inspect-view';
 import { ArtifactsView } from '@/components/views/artifacts-view';
+import { IntegrationsView } from '@/components/views/integrations-view';
+import { useAgentStore } from '@/lib/stores/agents';
 
 export default function HomePage() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const { currentView, setCurrentView } = useAppStore();
   const { conversations } = useChatStore();
   const { swarms } = useSwarmsStore();
+  const { agents } = useAgentStore();
 
   if (currentView === 'chat') return <ChatView />;
+  if (currentView === 'agents') return <div className="p-6"><h1 className="text-2xl font-bold mb-4">Agents</h1><p className="text-muted-foreground">Total Agents: {agents.length}</p></div>;
   if (currentView === 'swarms') return <SwarmsView />;
   if (currentView === 'skills') return <SkillsView />;
+  if (currentView === 'integrations') return <IntegrationsView />;
   if (currentView === 'artifacts') return <ArtifactsView />;
   if (currentView === 'memory') return <MemoryView />;
   if (currentView === 'inspect') return <InspectView />;
@@ -244,10 +249,10 @@ const getFeatures = (setCurrentView: (view: any) => void) => [
   },
   {
     id: 2,
-    title: 'Intelligent Chat',
-    description: 'Real-time conversations with configurable AI agents',
-    icon: MessageIcon,
-    action: () => setCurrentView('chat'),
+    title: 'Agent Builder',
+    description: 'Configure agents with roles, models, tools and MCPs',
+    icon: Grid3x3,
+    action: () => setCurrentView('agents'),
   },
   {
     id: 3,
@@ -258,24 +263,24 @@ const getFeatures = (setCurrentView: (view: any) => void) => [
   },
   {
     id: 4,
-    title: 'MCP Marketplace',
-    description: 'Browse and integrate tools and skills dynamically',
+    title: 'Skills & Tools',
+    description: 'GitHub import, web scraping, MCP marketplace',
     icon: Puzzle,
     action: () => setCurrentView('skills'),
   },
   {
     id: 5,
+    title: 'Integrations',
+    description: 'Connect Google Drive, GitHub, Email, and more',
+    icon: Zap,
+    action: () => setCurrentView('integrations'),
+  },
+  {
+    id: 6,
     title: 'Memory System',
     description: 'Knowledge base and learned memory for agents',
     icon: Brain,
     action: () => setCurrentView('memory'),
-  },
-  {
-    id: 6,
-    title: 'Inspect Panel',
-    description: 'DevTools-like debugging and monitoring interface',
-    icon: Zap,
-    action: () => setCurrentView('inspect'),
   },
 ];
 

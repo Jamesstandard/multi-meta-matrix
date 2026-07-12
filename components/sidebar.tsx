@@ -14,6 +14,8 @@ import {
   ChevronRight,
   Settings,
   Code,
+  Zap,
+  Plus,
 } from '@/lib/icons';
 
 export function Sidebar() {
@@ -22,10 +24,12 @@ export function Sidebar() {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'chat', label: 'Chat', icon: ChatIcon },
+    { id: 'agents', label: 'Agents', icon: Plus },
     { id: 'swarms', label: 'Swarms', icon: Grid3x3 },
     { id: 'skills', label: 'Skills', icon: Puzzle },
-    { id: 'artifacts', label: 'Artifacts', icon: Code },
+    { id: 'integrations', label: 'Integrations', icon: Zap },
     { id: 'memory', label: 'Memory', icon: Brain },
+    { id: 'artifacts', label: 'Artifacts', icon: Code },
     { id: 'inspect', label: 'Inspect', icon: Wrench },
   ];
 
