@@ -19,6 +19,11 @@ export interface SwarmTask {
   dueDate?: number;
   createdAt: number;
   updatedAt: number;
+  role?: string;
+  llm?: 'gpt-4' | 'gpt-3.5-turbo' | 'claude-3-opus' | 'claude-3-sonnet' | 'llama-2' | 'mixtral';
+  tools?: string[];
+  skills?: string[];
+  isActive?: boolean;
 }
 
 export interface Swarm {

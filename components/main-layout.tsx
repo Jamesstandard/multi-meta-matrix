@@ -1,43 +1,62 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAppStore } from '@/lib/stores/app';
-import { SettingsPanel } from './modals/settings-panel';
-import { Settings } from '@/lib/icons';
+import React, { useEffect } from 'react';
+import { ResponsiveNavigation, MobileNavToggle } from '@/components/responsive-navigation';
+import { ResponsiveSettings, SettingsButton } from '@/components/responsive-settings';
+import { useUIStore } from '@/lib/stores/ui';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const { sidebarOpen } = useAppStore();
+  const { deviceType, setScreenWidth } = useUIStore();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setScreenWidth]);
+
+  const isMobile = deviceType === 'mobile';
 
   return (
-    <>
-      {/* Top Bar */}
-      <div className={`fixed top-0 right-0 h-16 border-b border-border bg-card/50 backdrop-blur-sm z-20 transition-all duration-300 ${
-        sidebarOpen ? 'left-64' : 'left-20'
-      }`}>
-        <div className="h-full px-6 flex items-center justify-end">
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="p-2 hover:bg-secondary rounded-lg transition-colors"
-          >
-            <Settings className="w-5 h-5 text-muted-foreground hover:text-foreground" />
-          </button>
-        </div>
-      </div>
+    <div className="h-screen flex flex-col md:flex-row bg-background overflow-hidden">
+      {/* Mobile Top Bar */}
+      {isMobile && (
+        <header className="flex items-center justify-between h-16 border-b border-border bg-card px-4 flex-shrink-0 z-30">
+          <h1 className="font-bold text-lg">MMM</h1>
+          <div className="flex items-center gap-2">
+            <SettingsButton />
+            <MobileNavToggle />
+          </div>
+        </header>
+      )}
 
-      {/* Content */}
-      <div className={`fixed top-16 right-0 bottom-0 overflow-y-auto transition-all duration-300 ${
-        sidebarOpen ? 'left-64' : 'left-20'
-      }`}>
-        {children}
-      </div>
+      {/* Navigation Sidebar */}
+      <ResponsiveNavigation />
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Desktop Top Bar */}
+        {!isMobile && (
+          <header className="hidden md:flex items-center justify-between h-16 border-b border-border bg-card/50 backdrop-blur-sm px-6 flex-shrink-0">
+            <h1 className="font-bold text-lg">Multi Meta Matrix</h1>
+            <SettingsButton />
+          </header>
+        )}
+
+        {/* Content Area - Responsive and scrollable */}
+        <div className="flex-1 overflow-auto w-full">
+          <div className="h-full w-full">{children}</div>
+        </div>
+      </main>
 
       {/* Settings Panel */}
-      <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-    </>
+      <ResponsiveSettings />
+    </div>
   );
 }
