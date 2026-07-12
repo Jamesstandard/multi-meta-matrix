@@ -91,10 +91,11 @@ export function SkillsView() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      {/* Header */}
-      <div className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
-        <div className="h-full px-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">MCP Skills Marketplace</h1>
+      {/* Header - Responsive */}
+      <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-20">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Skills Marketplace</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">Manage tools, skills, and integrations</p>
         </div>
       </div>
 
